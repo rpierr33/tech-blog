@@ -1,42 +1,145 @@
-const { Model, DataTypes } = require('sequelize');
+const router = require('express').Router();
+const sequelize = require('../../config/connection');
+const { Post, User, Comment } = require('../../models');
+const withAuth = require('../../utils/auth');
 
-const sequelize = require('../config/connection');
+// get all users
+router.get('/', (req, res) => {
+  console.log('======================');
+  Post.findAll({
+      attributes: [
+          'id',
+          'title',
+          'description',
+          'created_at'
+      ],
+      include: [
+        {
+          model: Comment,
+          attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+          include: {
+            model: User,
+            attributes: ['username']
+          }
+        },
+        {
+          model: User,
+          attributes: ['username']
+        }
+      ]
 
-class ProductTag extends Model {}
+  })
 
-ProductTag.init(
-  {
-    // define columns
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true
+  .then(dbPostData => res.json(dbPostData))
+  .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+  });
+});
+
+router.get('/edit/:id', withAuth, (req, res) => {
+  Post.findOne({
+    where: {
+        id: req.params.id
     },
-   
-    product_id: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'product',
-        key:'id'
+    attributes: [
+      'id',
+      'title',
+      'description',
+      'created_at'
+  ],
+  include: [
+    {
+      model: Comment,
+      attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+      include: {
+        model: User,
+        attributes: ['username']
       }
     },
+    {
+      model: User,
+      attributes: ['username']
+    }
+  ]
 
-    tag_id: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'tag',
-        key:'id'
+  })
+    .then(dbPostData => {
+      if (!dbPostData) {
+        res.status(404).json({ message: 'No post found with this id' });
+        return;
+    }
+    res.json(dbPostData);
+})
+    
+.catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+});
+});
+
+
+
+
+router.post('/', withAuth, (req, res) => {
+  // 
+  Post.create({
+    title: req.body.title,
+    description: req.body.description,
+    user_id: req.session.user_id
+})
+    .then(dbPostData => res.json(dbPostData))
+    .catch(err => {
+        console.log(err);
+        res.status(500).json(err);
+    });
+});
+
+router.put('/:id', withAuth, (req, res) => {
+  Post.update(
+      {
+          title: req.body.title,
+          description: req.body.description
+      },
+      {
+          where: {
+              id: req.params.id
+          }
       }
-    },
-  },
-  {
-    sequelize,
-    timestamps: false,
-    freezeTableName: true,
-    underscored: true,
-    modelName: 'product_tag',
-  }  
-);
+  )
+      .then(dbPostData => {
+          if (!dbPostData) {
+              res.status(404).json({ message: 'No post found with this id' });
+              return;
+          }
+          res.json(dbPostData);
+      })
+      .catch(err => {
+          console.log(err);
+          res.status(500).json(err);
+      });
+});
 
-module.exports = ProductTag;
+router.delete('/:id', withAuth, (req, res) => {
+  console.log('id', req.params.id);
+  Post.destroy({
+      where: {
+          id: req.params.id
+      }
+  })
+      .then(dbPostData => {
+          if (!dbPostData) {
+              res.status(404).json({ message: 'No post found with this id' });
+              return;
+          }
+          res.json(dbPostData);
+      })
+      .catch(err => {
+          console.log(err);
+          res.status(500).json(err);
+      });
+});
+
+
+
+module.exports = router;

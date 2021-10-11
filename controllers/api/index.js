@@ -1,39 +1,11 @@
-// import models
-const Product = require('./user-routes');
-const Category = require('./comment-routes');
-const Tag = require('./Tag');
-const ProductTag = require('./post-routes');
+const router = require('express').Router();
 
+const userRoutes = require('./user-routes.js');
+const postRoutes = require('./post-routes.js');
+const commentRoutes = require('./comment-routes.js');
 
-// create associations
+router.use('/users', userRoutes);
+router.use('/posts', postRoutes);
+router.use('/comments', commentRoutes);
 
-// Products belongsTo Category
-Product.belongsTo(Category, {
-  foreignKey: 'category_id'
-});
-
-// Categories have many Products
-Category.hasMany(Product, {
-  foreignKey: 'category_id'
-});
-
-// Products belongToMany Tags (through ProductTag)
-Product.belongsToMany(Tag, {
-  through: ProductTag,
-  foreignKey: 'product_id'
-});
-
-// Tags belongToMany Products (through ProductTag)
-
-Tag.belongsToMany(Product, {
-  through: ProductTag,
-  foreignKey: 'tag_id'
-});
-
-
-module.exports = {
-  Product,
-  Category,
-  Tag,
-  ProductTag,
-};
+module.exports = router;

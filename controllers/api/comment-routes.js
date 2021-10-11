@@ -1,31 +1,55 @@
-const { Model, DataTypes } = require('sequelize');
+const router = require('express').Router();
+const { Comment } = require('../../models');
+const withAuth = require('../../utils/auth');
 
-const sequelize = require('../config/connection.js');
+router.get('/', (req, res) => {
+  Comment.findAll()
+  .then((dbCommentData) => res.json(dbCommentData))
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
 
-class Category extends Model {}
+  })
+});
 
-Category.init(
-  {
-    // define columns
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    category_name: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+router.post('/', withAuth, (req, res) => {
+  // expects => {comment_text: "This is the comment", user_id: 1, post_id: 2}
+  console.log(req.body);
+  console.log(req.session.user_id)
+  Comment.create({
+      comment_text: req.body.comment_text,
+      user_id: req.session.user_id,
+      post_id: req.body.post_id
+  })
+      .then(dbCommentData => res.json(dbCommentData))
+      .catch(err => {
+          console.log(err);
+          res.status(400).json(err);
+      });
+});
+
+router.delete('/:id', withAuth, (req, res) => {
+  Comment.destroy({
+
+    where: {
+        id: req.params.id
       }
-    },    
 
-    {
-    sequelize,
-    timestamps: false,
-    freezeTableName: true,
-    underscored: true,
-    modelName: 'category',
-  }
-);
+    })      
+      .then(dbCommentData => {
+        if (!dbCommentData) {
+          res.status(404).json({ message: 'No comment found with this id!' });
+          return;
+      }
+      res.json(dbCommentData);
+  })
+      .catch(err => {
+          console.log(err);
+          res.status(500).json(err);
+      });
+});
+
+
+
 
 module.exports = Category;
