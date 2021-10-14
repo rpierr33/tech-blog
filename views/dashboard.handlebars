@@ -2,32 +2,31 @@
 <section class="form-box">
     <form class="new-post-form">
         <div>
-            <label for="post-title">Title></label>
-            <input type="text" id="post-title" name="post-title">
+            <label for="post-title">Title</label>
+            <input type="text" id="post-title" name="post-title" />
         </div>
-         <div>
-            <label for="description">Content></label>
-            <input type="text" id="post-content" name="description">
+        <div>
+            <label for="description">Content</label>
+            <input type="text" id="post-content" name="description" />
         </div>
-        <button type="submit" class="btn" id="submit"> <a href="/">Create</a></button>
+        <button type="submit" class="btn" id="submit"><a href="/">Create</a></button>
     </form>
-
 </section>
 
 <br>
 
-{{#if post.length}}
-<h2>Your Post</h2>
+{{#if posts.length}}
+<h2>Your Posts</h2>
 <section class="form-box">
     <ul>
-        {{#each post as |post|}}
+        {{#each posts as |post|}}
         <li>
             {{> post-info post}}
-            <a href="/dashboard/edit{{post.id}}" class="edit-link">Edit post</a>
+            <a href="/dashboard/edit/{{post.id}}" class="edit-link">Edit post</a>
         </li>
         {{/each}}
     </ul>
- </section>   
- {{/if}}
+</section>
+{{/if}}
 
- <script src="/javascript/add-post.js"></script>
+<script src="/javascript/add-post.js"></script>
