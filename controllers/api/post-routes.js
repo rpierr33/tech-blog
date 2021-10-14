@@ -37,7 +37,7 @@ router.get('/', (req, res) => {
   });
 });
 
-router.get('/edit/:id', withAuth, (req, res) => {
+router.get('/:id', (req, res) => {
   Post.findOne({
     where: {
         id: req.params.id

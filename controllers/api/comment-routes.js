@@ -52,4 +52,4 @@ router.delete('/:id', withAuth, (req, res) => {
 
 
 
-module.exports = Category;
+module.exports = router;
