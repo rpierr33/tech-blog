@@ -36,7 +36,7 @@ router.get('/', withAuth, (req, res) => {
 
     .then(dbPostData => {
       const post = dbPostData.map(post => post.get({ plain: true }));
-      console.log(posts);
+      console.log('HIT THE DASHBOARD ROUTE!! ABOUT TO SHOW THEM THE PAGE!!!',post);
       res.render('dashboard', { post, loggedIn: true });
     })
     .catch(err => {
