@@ -4,12 +4,10 @@
 ## Description
 This website allows developers to write about tech so they can publish articles, blog posts, and thoughts and opinions.
 
-![alt text]("https://github.com/rpierr33/tech-blog/assets/image/Tech-blog.png")
+![alt text]("https://github.com/rpierr33/Tech-blog/assets/image/Tech-blog.png")
 
 ## Table of Contents
 - [Description](#description)
-- [User Story](#user-story)
-- [Acceptance Criteria](#acceptance-criteria)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributors](#contributors)
